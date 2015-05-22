@@ -14,6 +14,6 @@ depends:
 build: depends
 	${REBAR} compile
 
-standalone:
-	${REBAR} -C rebar.config.standalone get-deps compile
+test: build
+	${REBAR} skip_dept=true eunit
 
