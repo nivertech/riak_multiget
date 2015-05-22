@@ -1,0 +1,9 @@
+%% ex: ft=erlang 
+{erl_opts, [debug_info]}.
+{xref_checks, [undefined_function_calls]}.
+
+{deps,[
+       {riak_kv, ".*",   
+        {git, "https://github.com/basho/riak_kv.git",
+         {tag, "1.4.12"}}}
+      ]}.

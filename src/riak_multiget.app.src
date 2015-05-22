@@ -1,0 +1,14 @@
+{application, riak_multiget,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  riak_core,
+                  riak_kv
+                 ]},
+  {mod, { riak_multiget_app, []}},
+  {env, []}
+ ]}.
