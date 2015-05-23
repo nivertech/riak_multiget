@@ -34,7 +34,7 @@ process(#rpbmultigetreq{ bucket        = Bucket,
                          stream        = Stream
                        }, State) ->
     Options = filter_opt(Fields, timeout_opt(Timeout, [])),
-    Method = method(Stream),
+    Method  = method(Stream),
     case riak_multiget_fsm:Method(Bucket, Keys, Options) of
         {error, Reason} ->
             {error, {format, Reason}};
@@ -65,11 +65,11 @@ process_stream(_, _, State) ->
 
 transform_results(Results) ->
     [#rpbmultigetkvpair{
-        key = K,
+        key   = K,
         value = res2pb(V) 
        } || {K, V} <- Results].
 
-method(true = _Stream) -> start_link;
+method(true  = _Stream) -> start_link;
 method(false = _Stream) -> run.
 
 filter_opt([], Opts) -> Opts;
@@ -80,13 +80,13 @@ timeout_opt(undefined, Opts) -> Opts;
 timeout_opt(Timeout, Opts) when is_integer(Timeout) ->
     [{timeout, Timeout} | Opts].
 
-type2status(eoi) -> 'OK';
+type2status(eoi)     -> 'OK';
 type2status(timeout) -> 'TIMEOUT'.
 
 res2pb(Value) when is_binary(Value) -> Value;
 res2pb(Reason) when is_atom(Reason) -> undefined.
 
-msg_code(rpbmultigetreq) -> 101;
+msg_code(rpbmultigetreq)  -> 101;
 msg_code(rpbmultigetresp) -> 102.
 
 msg_type(101) -> rpbmultigetreq;
