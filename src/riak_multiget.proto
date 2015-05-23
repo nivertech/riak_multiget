@@ -9,6 +9,7 @@ message RpbMultiGetReq {
     repeated bytes keys = 2;
 	repeated bytes filter_fields = 3;
     optional uint32 timeout = 4;
+    optional bool stream = 5 [default = false];
 }
 
 message RpbMultiGetKVPair {
@@ -19,7 +20,6 @@ message RpbMultiGetKVPair {
 enum RpbMultiGetStatus {
 	OK = 1;
 	TIMEOUT = 2;
-	ERROR = 3;
 }
 
 // MultiGet response - one or more of these packets will be sent

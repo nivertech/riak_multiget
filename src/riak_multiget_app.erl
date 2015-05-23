@@ -16,6 +16,8 @@ start(_StartType, _StartArgs) ->
     case riak_multiget_sup:start_link() of
         {error, _} = Err -> Err;
         {ok, _} = Sup ->
+            {ok, FSM_Limit} = application:get_env(fsm_limit),
+            sidejob:new_resource(riak_multiget_fsm_sj, sidejob_supervisor, FSM_Limit),
             ok = riak_api_pb_service:register(pb_services()),
             Sup
     end.

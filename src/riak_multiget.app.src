@@ -10,5 +10,7 @@
                   riak_kv
                  ]},
   {mod, { riak_multiget_app, []}},
-  {env, []}
+  {env, [
+         {fsm_limit, 10000}
+        ]}
  ]}.

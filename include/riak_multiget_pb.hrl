@@ -4,7 +4,8 @@
     bucket = erlang:error({required, bucket}),
     keys = [],
     filter_fields = [],
-    timeout
+    timeout,
+    stream = false
 }).
 -endif.
 
