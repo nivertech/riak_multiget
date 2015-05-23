@@ -4,7 +4,7 @@
 
 -export([start/0]).
 %% Application callbacks
--export([start/2, stop/1]).
+-export([start/2, prep_stop/1, stop/1]).
 
 start() ->
     a_start(riak_multiget, transient).
@@ -12,12 +12,31 @@ start() ->
 %% Application callbacks
 
 start(_StartType, _StartArgs) ->
-    riak_multiget_sup:start_link().
+    riak_core:wait_for_service(riak_kv),
+    case riak_multiget_sup:start_link() of
+        {error, _} = Err -> Err;
+        {ok, _} = Sup ->
+            ok = riak_api_pb_service:register(pb_services()),
+            Sup
+    end.
+
+prep_stop(_State) ->
+    try
+        ok = riak_api_pb_service:deregister(pb_services()),
+        lager:info("Unregistered pb services")
+    catch
+        Type:Reason ->
+            lager:error("Stopping application riak_multiget - ~p:~p.\n", [Type, Reason])
+    end,
+    stopping.
 
 stop(_State) ->
     ok.
 
 %% Helpers
+
+pb_services() ->
+    [Mod:signature() || Mod <- [riak_multiget_pb_service]].
 
 a_start(App, Type) ->
   start_ok(App, Type, application:start(App, Type)).

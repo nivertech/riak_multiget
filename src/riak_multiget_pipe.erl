@@ -11,7 +11,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--export([run/3, run/6]).
+-export([run/4, run/6]).
 
 %% Internal exports
 -export([pick_xform/3]).
@@ -20,40 +20,24 @@
 
 -type fields_spec() :: [binary()] | undefined.
 
+%% Behaviour defenition
 -callback init(Arg::term()) -> {ok, State::term()}.
 -callback result(riak_object:key(), binary() | notfound | timeout, State::term()) -> 
     {ok, State::term()} | {stop, State::term()}.
 -callback finish(eoi | timeout | stopped, State::term()) -> term().
 
-init(_) -> {ok, []}.
-
--ifdef(TEST).
-
-result(stop, _, Acc) ->
-    {stop, Acc};
-result(<<"stop_timeout">>, timeout, Acc) ->
-    {stop, Acc};
-result(K, V, Acc) ->
-    {ok, [{K, V} | Acc]}.
-
--else.
-
-result(K, V, Acc) ->
-    {ok, [{K, V} | Acc]}.
-
--endif.
-
-finish(Type, Acc) ->
-    {Type, Acc}.
-
-run(Bucket, Keys, Fields) ->
-    run(?MODULE, [], Bucket, Keys, Fields, 5000).
+-spec run(riak_object:bucket(), [riak_object:key()], fields_spec(), timeout() | undefined) ->
+    {ok, term()} | {error, term()}.
+run(Bucket, Keys, Fields, undefined) ->
+    run(Bucket, Keys, Fields, 5000);
+run(Bucket, Keys, Fields, Timeout) ->
+    run(?MODULE, [], Bucket, Keys, Fields, Timeout).
 
 %% TODO make it FSM
 -spec run(module(), term(),
           riak_object:bucket(), [riak_object:key()],
           fields_spec(), timeout()) ->
-    ok | {error, term()}.
+    {ok, term()} | {error, term()}.
 run(Module, Arg, Bucket, Keys, Fields, Timeout)
   when is_atom(Module),
        is_binary(Bucket),
@@ -69,9 +53,9 @@ run(Module, Arg, Bucket, Keys, Fields, Timeout)
                                  end, Module:init(Arg), Failed),
             case ModRes of
                 {stop, St} -> 
-                    Module:finish(stopped, St);
+                    {ok, Module:finish(stopped, St)};
                 {ok, State1} ->
-                    collect_results(Module, State1, Pipe, Timeout)
+                    {ok, collect_results(Module, State1, Pipe, Timeout)}
             end
     end.
 
@@ -104,6 +88,8 @@ run_(Bucket, Keys, Fields) ->
             riak_pipe:eoi(Pipe),
             {ok, Pipe, Failed}
     end.
+
+%% Pipe declaration and logic
 
 -spec pipe_start(riak_object:bucket(), riak_object:key(), fields_spec()) ->
     {ok, riak_pipe:pipe()} | {error, term()}.
@@ -149,9 +135,35 @@ pick_fields(Value, Fields) when is_list(Fields) ->
                end,
     iolist_to_binary(mochijson2:encode(JSONTerm)).
 
+%% Default implementation callbacks
+
+init(_) -> {ok, []}.
+
+-ifdef(TEST).
+
+result(stop, _, Acc) ->
+    {stop, Acc};
+result(<<"stop_timeout">>, timeout, Acc) ->
+    {stop, Acc};
+result(K, V, Acc) ->
+    {ok, [{K, V} | Acc]}.
+
+-else.
+
+result(K, V, Acc) ->
+    {ok, [{K, V} | Acc]}.
+
+-endif.
+
+finish(Type, Acc) ->
+    {Type, Acc}.
+
 %% EUnit tests
 
 -ifdef(TEST).
+
+run(Bucket, Keys, Fields) ->
+    run(Bucket, Keys, Fields, undefined).
 
 pick_fields_test() ->
     JSONBin = <<"{\"a\": 1, \"b\": 2}">>,
@@ -205,32 +217,30 @@ behaviour_happy_test() ->
     setup_mocks(),
     Keys = [<<($0 + I)>> || I <- lists:seq(1, 9)],
     Expected = lists:reverse([{K, K} || K <- Keys]),
-    {eoi, Expected} = run(?MODULE, [], <<"foo">>, Keys, undefined, 1000).
+    {ok, {eoi, Expected}} = run(<<"foo">>, Keys, undefined).
 
 behaviour_vnode_busy_test() ->
     setup_mocks(),
     Keys = [<<($0 + I)>> || I <- lists:seq(1, 9)],
     Expected = lists:reverse([{K, K} || K <- Keys]) ++ [{<<"error">>, timeout}],
-    {eoi, Expected} = run(?MODULE, [], <<"foo">>,
-                          [<<"error">> | Keys],
-                          undefined, 1000).
+    {ok, {eoi, Expected}} = run(<<"foo">>, [<<"error">> | Keys], undefined).
 
 behaviour_vnode_busy_stop_test() ->
     setup_mocks(),
     Keys = [<<($0 + I)>> || I <- lists:seq(1, 9)],
     Expected = [{<<"error">>, timeout}],
-    {stopped, Expected} = run(?MODULE, [], <<"foo">>,
-                          [<<"error">>, <<"stop_timeout">>, <<"error">> | Keys],
-                          undefined, 1000).
+    Keys1 = [<<"error">>, <<"stop_timeout">>, <<"error">> | Keys],
+    {ok, {stopped, Expected}} = run(<<"foo">>, Keys1, undefined).
+
 behaviour_stop_test() ->
     setup_mocks(),
     Keys = [<<($0 + I)>> || I <- lists:seq(1, 9)],
     Expected = lists:reverse([{K, K} || K <- Keys]),
-    {stopped, Expected} = run(?MODULE, [], <<"foo">>, Keys ++ [stop], undefined, 1000).
+    {ok, {stopped, Expected}} = run(<<"foo">>, Keys ++ [stop], undefined).
 
 behaviour_pipe_fail_test() ->
     meck:expect(riak_pipe, exec, fun(_Fittings, _Opts) -> {error, mock} end),
-    {error, mock} = run(?MODULE, [], <<"foo">>, [<<"x">>], undefined, 1000).
+    {error, mock} = run(<<"foo">>, [<<"x">>], undefined).
 
 
 -endif.

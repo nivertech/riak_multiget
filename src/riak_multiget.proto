@@ -1,0 +1,30 @@
+// Java package specifiers
+option java_package = "com.wooga.riak.multiget.protobuf";
+option java_outer_classname = "RiakMultiGetPB";
+
+
+// Get values for multple keys from a bucket, request.
+message RpbMultiGetReq {
+    required bytes bucket = 1;
+    repeated bytes keys = 2;
+	repeated bytes filter_fields = 3;
+    optional uint32 timeout = 4;
+}
+
+message RpbMultiGetKVPair {
+    required bytes key = 1;
+    optional bytes value = 2;
+}
+
+enum RpbMultiGetStatus {
+	OK = 1;
+	TIMEOUT = 2;
+	ERROR = 3;
+}
+
+// MultiGet response - one or more of these packets will be sent
+// the last one will have done set to Status (and may not have any keys in it)
+message RpbMultiGetResp {
+    repeated RpbMultiGetKVPair results = 1;
+    optional RpbMultiGetStatus done = 2;
+}
