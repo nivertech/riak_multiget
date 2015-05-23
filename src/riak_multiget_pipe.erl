@@ -1,8 +1,3 @@
-%%%-------------------------------------------------------------------
-%%% @author Valery Meleshkin <valery.meleshkin@wooga.com>
-%%% @copyright 2015 Wooga
-%%%-------------------------------------------------------------------
-
 -module(riak_multiget_pipe).
 
 -include_lib("riak_pipe/include/riak_pipe.hrl").

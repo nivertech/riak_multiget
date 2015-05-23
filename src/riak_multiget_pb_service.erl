@@ -1,8 +1,3 @@
-%%%-------------------------------------------------------------------
-%%% @author Valery Meleshkin <valery.meleshkin@wooga.com>
-%%% @copyright 2015 Wooga
-%%%-------------------------------------------------------------------
-
 -module(riak_multiget_pb_service).
 
 -behaviour(riak_api_pb_service).
