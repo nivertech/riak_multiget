@@ -8,15 +8,15 @@ clean:
 	rm -rf .eunit
 	rm -f test/*.beam
 
-depends: 
-	${REBAR} get-deps
+deps: 
+	${REBAR} get-deps compile
 
-build: depends
-	${REBAR} compile
+build: deps
+	${REBAR} skip_deps=true compile
 
 test: build
-	${REBAR} skip_dept=true eunit
-	${REBAR} skip_dept=tru ct
+	${REBAR} skip_deps=true eunit
+	${REBAR} skip_deps=true ct
 
 tags:
 	erl -s tags subdir "./" -s init stop -noshell
