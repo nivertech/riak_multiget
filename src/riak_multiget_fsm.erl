@@ -34,7 +34,7 @@ start_link(Bucket, Keys, Options)
                 {requester, Requester},
                 {req_id,    ReqID}
                 | Options],
-    Result = case whereis(qs_range_fsm_sj) of
+    Result = case whereis(riak_multiget_fsm_sj) of
                  undefined ->
                      gen_fsm:start_link(?MODULE, Options1, []);
                  _ ->

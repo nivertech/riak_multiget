@@ -1,0 +1,10 @@
+{application,riak_multiget,
+             [{description,"Riak extension that enables efficient multi-key fetch"},
+              {vsn,"586bab8"},
+              {registered,[]},
+              {applications,[kernel,stdlib,riak_core,riak_kv]},
+              {mod,{riak_multiget_app,[]}},
+              {env,[{fsm_limit,10000}]},
+              {modules,[riak_multiget_app,riak_multiget_fsm,riak_multiget_pb,
+                        riak_multiget_pb_service,riak_multiget_pipe,
+                        riak_multiget_sup]}]}.
