@@ -16,7 +16,7 @@ Riak extension that enables efficient multi-key fetch. Internally it relies on `
 
 ## Examples
 
-To build for injection just issue `make`. 
+To build it just issue `make`. 
 
 Open the first console and cd into the app's directory, then`$ ./start.sh`,
 wait a bit until everything starts up, then (in the erlang console) issue `node()`

@@ -106,11 +106,11 @@ bucket = client.bucket "foo"
   object.store
 end
 
-print client.multi_get("foo", %w{1 2 3}).results
+print client.multi_get("foo", %w{1 2}).results
 puts
-print client.multi_get("foo", %w{1 2 3}, {:filter_fields => [:a, "b"]}).results
+print client.multi_get("foo", %w{10 9}, {:filter_fields => [:a, "b"]}).results
 puts
-client.multi_get("foo", %w{1 2 3}, {:filter_fields => [:a, "b"]}) do |res|
+client.multi_get("foo", %w{1 12 10 5}, {}) do |res|
   puts "#{res.done == RpbMultiGetResp::RpbMultiGetStatus::OK} #{res.results.map{|r| {r.key => r.value} } }"
 end
 
