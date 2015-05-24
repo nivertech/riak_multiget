@@ -21,6 +21,5 @@ erl +K true +P 1000000 -name $NODE -setcookie dev -pa ebin -pa deps/*/ebin \
 	-riak_core handoff_port $HANDOFF_PORT \
 	-riak_core platform_data_dir \"$DATA_DIR\" \
 	-riak_core ring_state_dir \"$RING_STATE_DIR\" \
-	-riak_core http '[ { "0.0.0.0",'$HTTP_PORT'} ]' \
 	-riak_api pb_port $PB_PORT 
 

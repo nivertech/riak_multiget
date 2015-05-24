@@ -27,15 +27,15 @@ init_per_suite(Config) ->
     application:load(riak_kv),
     application:set_env(riak_core, ring_creation_size, 4),
     application:set_env(riak_core, ring_state_dir, "<nostore>"),
-    application:set_env(riak_kv, storage_backend, riak_kv_memory_backend),
     application:set_env(riak_core, default_bucket_props,
                         [
                          {allow_mult, true},
                          {last_write_wins, false}
                         ]),
+    application:set_env(riak_core, schema_dirs, ["../../deps/*/priv"]),
     application:set_env(riak_api, pb_ip, "0.0.0.0"),
     application:set_env(riak_api, pb_port, 8070),
-    application:set_env(riak_kv, key_buffer_size, 5),
+    application:set_env(riak_kv, storage_backend, riak_kv_memory_backend),
     application:set_env(memory_backend, test, true),
     ok = riak_multiget_app:start(),
     riak_kv_memory_backend:reset(),

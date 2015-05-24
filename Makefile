@@ -16,7 +16,8 @@ build: deps
 
 test: build
 	${REBAR} skip_deps=true eunit
-	${REBAR} skip_deps=true ct
+	-rm -rf logs
+	${REBAR} skip_deps=true ct -v1
 
 tags:
 	erl -s tags subdir "./" -s init stop -noshell
