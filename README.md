@@ -4,11 +4,11 @@ Riak extension that enables efficient multi-key fetch. Internally it relies on `
 
 ### Features and non-features:
 
-- protobuf interface (piggybacks on riak's PB interface)
-- allows to fetch multiple objects at once
+- Allows to fetch multiple objects at once
 	- for JSON objects set of fields in a request may be narrowed down.
-- gets the first sibiling from the first available replica
-	- thus data may be stale
+- Protobuf interface (piggybacks on riak's PB interface).
+- Gets the first sibiling from the first available replica
+	- thus data may be stale.
 
 ### TODOs
 
@@ -16,7 +16,7 @@ Riak extension that enables efficient multi-key fetch. Internally it relies on `
 
 ## Examples
 
-To build it just issue `make`. 
+To build a standalone version just issue `make`. 
 
 Open the first console and cd into the app's directory, then`$ ./start.sh`,
 wait a bit until everything starts up, then (in the erlang console) issue `node()`
@@ -32,3 +32,17 @@ cd examples/ruby
 bundle install
 bundle exec ruby main.rb 
 ```
+
+## Injection into Riak installed from package
+
+1. Clone this repo.
+2. Issue `make with_riak_erl PATH_TO_RIAK=/usr/local/...` where `PATH_TO_RIAK` should be a path to your riak installation.
+3. To your `vm.args` file add the following:
+
+    ```
+    -pa /path/too/riak_multiget/ebin
+    -s riak_multiget_app
+    ```
+
+
+
