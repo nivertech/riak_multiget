@@ -10,5 +10,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "riak-client", "~> 1.4"
 
-  s.files       = ["lib/riak-client-multiget.rb"]
+  s.files       = ["lib/riak-client-multiget.rb", "lib/riak-client-multiget-messages.rb"]
 end
