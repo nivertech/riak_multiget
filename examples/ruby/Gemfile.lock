@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/wooga/riak_multiget.git
-  revision: 0926608233785dccf5f2cd7660e74c495ef34a6d
+  revision: 17a84be7c821a43da069a59d2a1f945589d5a7d6
   branch: master
   specs:
     riak-client-multiget (0.1.0)
