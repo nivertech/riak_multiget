@@ -25,7 +25,7 @@ Riak::Client::BeefcakeProtobuffsBackend.class_eval do
       message = socket.read(msglen-1)
       case Riak::Client::BeefcakeMessageCodes[msgcode]
       when :ErrorResp
-        res = RpbErrorResp.decode(message)
+        res = Riak::Client::BeefcakeProtobuffsBackend::RpbErrorResp.decode(message)
         raise Riak::ProtobuffsFailedRequest.new(res.errcode, res.errmsg)
       when :MultiGetResp
         res = RpbMultiGetResp.decode(message)
