@@ -1,13 +1,21 @@
+GIT
+  remote: https://github.com/wooga/riak_multiget.git
+  revision: 0926608233785dccf5f2cd7660e74c495ef34a6d
+  branch: master
+  specs:
+    riak-client-multiget (0.1.0)
+      riak-client (~> 1.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    beefcake (0.3.7)
+    beefcake (1.0.0)
     builder (3.2.2)
     i18n (0.7.0)
     innertube (1.0.2)
     multi_json (1.11.0)
-    riak-client (1.4.3)
-      beefcake (~> 0.3.7)
+    riak-client (1.4.5)
+      beefcake (~> 1.0.0)
       builder (>= 2.1.2)
       i18n (>= 0.4.0)
       innertube (~> 1.0.2)
@@ -17,4 +25,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  riak-client (= 1.4.3)
+  riak-client-multiget!

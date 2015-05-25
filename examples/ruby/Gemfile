@@ -1,3 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'riak-client', '1.4.3'
+git 'https://github.com/wooga/riak_multiget.git', :branch => "master" do
+  gem 'riak-client-multiget'
+end
